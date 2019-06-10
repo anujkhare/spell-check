@@ -37,8 +37,11 @@ def spell_check() -> Tuple:
     logger.info('Process request received')
 
     # Perform validation on request parameters
-    # params = json.loads(request.form["json"])
-    string = request.form.get('string')
+    if not request.is_json:
+    	return {}, 400
+    params = request.get_json()
+
+    string = params.get('string', '')
     logger.info(string)
 
     corrected_words = get_corrected_words(string)
@@ -58,11 +61,9 @@ def parse_args():
 
 
 def main():
-    # Flask app
     args = parse_args()
 
-    # waitress.serve(app, host='localhost', port=args.port)
-    app.run('localhost', args.port)
+    waitress.serve(app, host='localhost', port=args.port)
 
 
 if __name__ == '__main__':
