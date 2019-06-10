@@ -1,12 +1,11 @@
-import argparse
-import logging
-import sys
-
+from flask import Flask
 from flask import request
 from typing import Tuple, List
-import json
-from flask import Flask
+import argparse
 import aspell
+import json
+import logging
+import sys
 import waitress
 
 
@@ -38,7 +37,7 @@ def spell_check() -> Tuple:
 
     # Perform validation on request parameters
     if not request.is_json:
-    	return {}, 400
+        return {}, 400
     params = request.get_json()
 
     string = params.get('string', '')
