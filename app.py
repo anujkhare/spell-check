@@ -1,5 +1,6 @@
 import argparse
 import logging
+import sys
 
 from flask import request
 from typing import Tuple, List
@@ -8,10 +9,17 @@ from flask import Flask
 import aspell
 import waitress
 
-# Flask app
-app = Flask(__name__)
-logger = logging.getLogger(__name__)
 
+def setup_logger():
+    logger = logging.getLogger(__name__)
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    logger.addHandler(handler)
+    return logger
+
+
+app = Flask(__name__)
+logger = setup_logger()
 speller = aspell.Speller('lang', 'en')
 
 
@@ -29,8 +37,8 @@ def spell_check() -> Tuple:
     logger.info('Process request received')
 
     # Perform validation on request parameters
-    params = json.loads(request.form["json"])
-    string = params['string']
+    # params = json.loads(request.form["json"])
+    string = request.form.get('string')
     logger.info(string)
 
     corrected_words = get_corrected_words(string)
@@ -50,6 +58,7 @@ def parse_args():
 
 
 def main():
+    # Flask app
     args = parse_args()
 
     # waitress.serve(app, host='localhost', port=args.port)
